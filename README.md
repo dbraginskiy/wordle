@@ -1,3 +1,3 @@
-# hello-world
-Just saying hi
-This is how I spend my vacation
+KDB wordle solver 
+(a bit manual for the time being)
+
