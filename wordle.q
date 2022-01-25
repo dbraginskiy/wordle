@@ -2,11 +2,11 @@
 wa:read0 `$":D:\\dev\\kdb\\wordle\\wordle-answers.txt";
 // each letter scored by number of occurences in answer list
 c:desc sum {count each group x} each wa; 
-// wordle possible guesses & answers
-wg:wa,read0 `$":D:\\dev\\kdb\\wordle\\wordle-guesses.txt";
+// wordle possible guesses & answers (not that useful - commenting out)
+// wg:wa,read0 `$":D:\\dev\\kdb\\wordle\\wordle-guesses.txt";
 // assign score to all words (guesses & answers) based on above score
-// e.g. c distinct first wg
-s:desc wg!{sum c distinct x} each wg;
+// s:desc wg!{sum c distinct x} each wg;
+s:desc wa!{sum c distinct x} each wa;
 // answer-only words that maximize letter frequency
 // 20#desc wa!s wa
 rnk:desc wa!s wa;
@@ -33,16 +33,17 @@ guess1:{[rnk; g]
     rnk};
 
 // gs:(g1;g2;g3;g4;g5)
-guess:{[gs]
+guess:{[rnk;gs]
     gs:gs where (count each gs)>0;
     r:guess1[rnk;] each gs;
-    ((inter/) key each r) except ()};
+    r:((inter/) key each r) except ();
+    r!rnk r};
 
 // (guess word; letter present; letter in correct place)
 g1:("alert";01000b;00000b); 
 g2:("solid";01100b;00000b);
-g3:("ghoul";00101b;00101b);
+g3:();
 g4:();
 g5:();
 
-guess[(g1;g2;g3;g4;g5)]
+guess[rnk;(g1;g2;g3;g4;g5)]
