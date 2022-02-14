@@ -14,18 +14,21 @@ rnk:desc wa!s wa;
 w1:first key rnk;  // suggested first guess
 // g:g1
 guess1:{[rnk; g]
-    // first, filter answer list by letters in correct place using a regex
-    rgx:?[g 2;g 0;"?"];
     words:key rnk;
-    words:string (`$words where words like rgx) except `$(g 0);
-    // filter for letters that aren't in the correct place (but still present)
-    words:words where (&/){x in/: y}[;words] each ((g 0) where (g 1));
-    // also need to ensure these aren't repeated in same (incorrect) position
-    // letter (ltr) in string (s) cannot appear in same location
-    rgxs:{[s;ltr] ?[s=ltr;ltr;"?"]}[g 0;] each (g 0) where (g 1)<>(g 2);
-    words:{[w;rgx]
-        w:w where not w like rgx;
-        w}/[words;rgxs];
+    // if we guessed anything at all
+    if[(|/) g 1;[
+        // first, filter answer list by letters in correct place using a regex
+        rgx:?[g 2;g 0;"?"];
+        words:string (`$words where words like rgx) except `$(g 0);
+        // filter for letters that aren't in the correct place (but still present)
+        words:words where (&/){x in/: y}[;words] each ((g 0) where (g 1));
+        // also need to ensure these aren't repeated in same (incorrect) position
+        // letter (ltr) in string (s) cannot appear in same location
+        rgxs:{[s;ltr] ?[s=ltr;ltr;"?"]}[g 0;] each (g 0) where (g 1)<>(g 2);
+        words:{[w;rgx]
+            w:w where not w like rgx;
+            w}/[words;rgxs];
+    ]];
     // finally, filter based on letters that are not present
     words:words where not (|/){x in/: y}[;words] each ((g 0) where not (g 1));
     // words:words where not null `$words;
